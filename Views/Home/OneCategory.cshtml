@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = @ViewBag.ACategory.Name;
+}
+
+@model Association
+
+<div class="text-center">
+    <h1 class="display-4 mb-3">@ViewBag.ACategory.Name</h1>
+    <div class="d-flex justify-content-around">
+        <div class="p-2">
+            <h1 class="display-5 mb-3"><u>Products</u></h1>
+            <div class="list-group">
+                @foreach (Association item in ViewBag.ACategory.ProductsInCat)
+                {
+                    <form asp-action="DeleteAssociation" asp-controller="Home" asp-route-aid=@item.AssociationId asp-route-rid=1 asp-route-id=@ViewBag.ACategory.CategoryId>
+                        <button class="list-group-item list-group-item-action">@item.Product.Name</button>
+                    </form>
+                }
+            </div>
+        </div>
+        <div class="p-2">
+            <h1 class="display-5 mb-3">Add Product</h1>
+            <form asp-action="CreateCategoryAssociation" asp-controller="Home" method="post">
+                <div class="row g-3 align-items-center mx-auto mb-3">
+                    <div class="col-auto">
+                        <label asp-for="ProductId" class="col-form-label"></label>
+                    </div>
+                    <div class="col-auto">
+                        <select asp-for="ProductId" class="form-select">
+                            @{
+                                List<int> ProdIds = new List<int>();
+                                foreach (Association a in ViewBag.ACategory.ProductsInCat)
+                                {
+                                    ProdIds.Add(a.Product.ProductId);
+                                }
+                                foreach (Product item in ViewBag.AllProducts)
+                                {
+                                    if (!ProdIds.Contains(item.ProductId))
+                                    {
+                                        <option value=@item.ProductId>@item.Name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <span asp-validation-for="ProductId" class="form-text"></span>
+                </div>
+                <input type="hidden" name="CategoryId" value=@ViewBag.ACategory.CategoryId>
+                <button class="btn btn-primary mt-3">Create</button>
+            </form>
+        </div>
+    </div>
+</div>
